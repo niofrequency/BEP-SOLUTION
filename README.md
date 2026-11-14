@@ -1,51 +1,49 @@
 # Bep's Solution Travel
 
-Website pemesanan tiket pesawat & hotel yang terintegrasi dengan sistem Holigo.
+Website pemesanan tiket pesawat & hotel. Pesanan dikirim ke **WhatsApp** admin,
+lalu diproses manual (cek harga & issued tiket lewat panel agen Holigo).
 
-## Fitur
+## Alur pesanan
 
-- Homepage dengan pencarian tiket
-- Halaman hasil pencarian penerbangan
-- Form booking & pembayaran (VA / QRIS)
-- Dasbor agen (pesanan, saldo, log API)
-- UI sesuai prototipe
+1. Pelanggan isi rute/tanggal (pesawat) atau kota/tanggal (hotel) di beranda.
+2. Pelanggan isi data penumpang & kontak di halaman `/booking`.
+3. Klik **Kirim pesanan via WhatsApp** → WhatsApp terbuka dengan pesan pesanan
+   lengkap + kode pesanan (contoh `BEP-261114-AB12`), pelanggan tekan kirim.
+4. Admin cek harga di Holigo, balas harga & cara bayar, lalu kirim e-tiket.
 
-## Tech Stack
+Pelanggan bisa menanyakan status di `/cek-pesanan` (membuka WhatsApp dengan kode pesanannya).
 
-- Next.js 15 (App Router)
-- TypeScript
-- Tailwind CSS
+## Pengaturan (Vercel → Settings → Environment Variables)
 
-## Cara Menjalankan Lokal
+| Variabel | Wajib | Contoh |
+| --- | --- | --- |
+| `NEXT_PUBLIC_WA_NUMBER` | Ya | `081234567890` atau `6281234567890` |
+| `NEXT_PUBLIC_BUSINESS_EMAIL` | Tidak | `info@contoh.com` |
+| `NEXT_PUBLIC_BUSINESS_ADDRESS` | Tidak | `Jl. ..., Jayapura` |
+
+Setelah mengubah variabel, lakukan **Redeploy** di Vercel agar berlaku.
+Tanpa `NEXT_PUBLIC_WA_NUMBER`, tombol pesan akan menampilkan pesan error.
+
+## Menjalankan lokal
 
 ```bash
 npm install
-npm run dev
+NEXT_PUBLIC_WA_NUMBER=081234567890 npm run dev
 ```
 
 Buka http://localhost:3000
 
-## Deploy ke Vercel (Gratis)
-
-1. Push project ini ke GitHub
-2. Buka [vercel.com](https://vercel.com) → Import Project
-3. Pilih repository GitHub
-4. Deploy (otomatis)
-
-## Catatan
-
-- Data saat ini **mock** (contoh).
-- Untuk integrasi Holigo API yang sesungguhnya, tambahkan environment variables:
-  - `HOLIGO_API_URL`
-  - `HOLIGO_API_KEY` (atau username/password)
-- Kredensial Holigo hanya disimpan di server (Vercel Environment Variables), tidak pernah di frontend.
-
-## Struktur Folder
+## Struktur
 
 ```
-src/app/
-├── page.tsx          # Homepage
-├── search/page.tsx   # Hasil pencarian
-├── booking/page.tsx  # Form pemesanan
-└── dashboard/page.tsx # Dasbor agen
+src/app/page.tsx              # Beranda + form cari pesawat/hotel
+src/app/booking/page.tsx      # Form pesanan → WhatsApp
+src/app/cek-pesanan/page.tsx  # Cek status via WhatsApp
+src/app/kontak/page.tsx       # Kontak
+src/components/               # Header & footer
+src/lib/config.ts             # Nomor WA, email, alamat
+src/lib/order.ts              # Kode pesanan & format tanggal
 ```
+
+Integrasi otomatis (API Holigo, pembayaran VA/QRIS otomatis) belum ada; bisa
+ditambahkan nanti tanpa mengubah tampilan.

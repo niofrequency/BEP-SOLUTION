@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Bep's Solution Travel",
-  description: "Pesan tiket pesawat dan hotel, e-tiket terbit dalam hitungan menit.",
+  description: "Pesan tiket pesawat dan hotel, pesan mudah lewat WhatsApp.",
 };
 
 export default function RootLayout({
